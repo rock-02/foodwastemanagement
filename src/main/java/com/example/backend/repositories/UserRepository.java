@@ -18,6 +18,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<User> findUsersByRequestDonation();
 
     @Query("SELECT u FROM User u WHERE u.requestDonation = true ORDER BY u.requestDateTime ASC")
-    User findUserBasedOnRequestTimeAndRequestDonation();/
+    List<User> findUserBasedOnRequestTimeAndRequestDonation();
+
+    // @Query("SELECT u FROM User u WHERE u.isAvailableToDelevery = true AND u.role")
+    @Query("SELECT u FROM User u WHERE u.role.name = 'DELEVERY_AGENT' AND u.isAvailableToDelevery = true")
+    List<User> findUserByDeleveryBoyAndRole();
+
+
 
 }

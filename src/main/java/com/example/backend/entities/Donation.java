@@ -1,12 +1,16 @@
 package com.example.backend.entities;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
@@ -39,5 +43,16 @@ public class Donation {
 
     @ManyToOne
     private User recipient;
+
+    @JsonIgnore
+    @ManyToMany
+    List<FeedBack> feedbacks = new ArrayList<>();
+
+    @ManyToOne
+    private User deleveryBoy;
+
+    private Date deleveryDateTimeStarted;
+
+    private Date deleveryExpectedDateTime;
 
 }

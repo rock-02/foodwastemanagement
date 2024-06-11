@@ -37,12 +37,35 @@ public class DonationServiceImplementation implements DonationService {
 
         newDonation.setCreatedAt(new Date(System.currentTimeMillis()));
 
-        Donation saveDonation = donationRepository.save(newDonation);
+        List<User> requesrtedUsers = userRepository.findUserBasedOnRequestTimeAndRequestDonation();
 
-        user.getDonations().add(saveDonation);
+        List<User> deleveryBoys = userRepository.findUserByDeleveryBoyAndRole();
 
-        userRepository.save(user);
-        return saveDonation;
+        if (requesrtedUsers.size() > 0 && deleveryBoys.size() > 0) {
+            newDonation.setRecipient(requesrtedUsers.get(0));
+
+            requesrtedUsers.get(0).setRequestDonation(false);
+
+            requesrtedUsers.get(0).setRequestDateTime(null);
+
+            userRepository.save(requesrtedUsers.get(0));
+
+            newDonation.setDeleveryBoy(deleveryBoys.get(0));
+
+            newDonation.setDeleveryDateTimeStarted(new Date(System.currentTimeMillis()));
+
+            newDonation.setDeleveryExpectedDateTime(new Date(System.currentTimeMillis() + 3 * 3600000));
+
+            deleveryBoys.get(0).setAvailableToDelevery(false);
+
+            Donation saveDonation = donationRepository.save(newDonation);
+
+            user.getDonations().add(saveDonation);
+
+            return saveDonation;
+        } else {
+            throw new Exception("No Request Found for Donation");
+        }
 
     }
 
@@ -54,9 +77,13 @@ public class DonationServiceImplementation implements DonationService {
     @Override
     public User requestDonation(User user) {
 
-        user.setRequestDonation(true);
-
-        user.setRequestDateTime(new Date(System.currentTimeMillis()));
+        if (user.isRequestDonation()) {
+            user.setRequestDonation(false);
+            user.setRequestDateTime(null);
+        } else {
+            user.setRequestDonation(true);
+            user.setRequestDateTime(new Date(System.currentTimeMillis()));
+        }
 
         User savedUser = userRepository.save(user);
 
@@ -74,6 +101,31 @@ public class DonationServiceImplementation implements DonationService {
         List<Donation> requests = donationRepository.findByPastRequestDonations(user);
 
         return requests;
+    }
+
+    @Override
+    public Donation findDonationById(Long id) throws Exception {
+        return donationRepository.findById(id).orElseThrow(() -> new Exception("Donation Not Found"));
+    }
+
+    @Override
+    public Donation updateDonationStatus(Long donationId, String status, User user) throws Exception {
+
+        Donation donation = findDonationById(donationId);
+
+        if (donation == null) {
+            throw new Exception("Donation is not there");
+        }
+
+        if (donation.getDeleveryBoy().getId() != user.getId()) {
+            throw new Exception("You cant upadte the donation Status");
+        }
+
+        donation.setDonationStatus(status);
+
+        donationRepository.save(donation);
+
+        return donation;
     }
 
 }

@@ -18,6 +18,4 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
     @Query("SELECT d From Donation d where d.recipient = :user")
     List<Donation> findByPastRequestDonations(User user);
 
-
-
 }

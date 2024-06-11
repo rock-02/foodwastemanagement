@@ -17,4 +17,8 @@ public interface DonationService {
 
     public List<Donation> findPastRequestDonations(User user);
 
+    public Donation findDonationById(Long id) throws Exception;
+
+    public Donation updateDonationStatus(Long donationId, String status, User user) throws Exception;
+
 }

@@ -63,6 +63,11 @@ public class AuthController {
 
         newUser.setAddress(user.getAddress());
 
+        if (newUser.getRole().getName().equals("DELEVERY_AGENT")) {
+
+            newUser.setAvailableToDelevery(true);
+        }
+
         User savedUser = userRepository.save(newUser);
 
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -99,7 +104,6 @@ public class AuthController {
 
         String token = jwtProvider.generateToken(authentication);
 
-    
         AuthResponse authResponse = new AuthResponse(token, "Login Success");
 
         return authResponse;

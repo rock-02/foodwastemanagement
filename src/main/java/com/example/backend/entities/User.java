@@ -27,10 +27,9 @@ import lombok.NoArgsConstructor;
 public class User {
 
     @Id
-
     @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
     @GeneratedValue(generator = "user_sequence", strategy = GenerationType.SEQUENCE)
-    private Integer id;
+    private Long id;
 
     private String userName;
 
@@ -54,4 +53,8 @@ public class User {
     private boolean requestDonation = false;
 
     private Date requestDateTime;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean isAvailableToDelevery = false;
+
 }
