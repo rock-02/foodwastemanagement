@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.entities.Donation;
+import com.example.backend.entities.EmailDetails;
+import com.example.backend.entities.Request;
 import com.example.backend.entities.User;
 import com.example.backend.repositories.DonationRepository;
+import com.example.backend.repositories.RequestRepository;
 import com.example.backend.repositories.UserRepository;
 
 @Service
@@ -19,6 +22,12 @@ public class DonationServiceImplementation implements DonationService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RequestRepository requestRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public Donation saveDonation(Donation donation, User user) throws Exception {
@@ -52,6 +61,8 @@ public class DonationServiceImplementation implements DonationService {
 
             newDonation.setDeleveryBoy(deleveryBoys.get(0));
 
+            newDonation.setDonationStatus("On the Way");
+
             newDonation.setDeleveryDateTimeStarted(new Date(System.currentTimeMillis()));
 
             newDonation.setDeleveryExpectedDateTime(new Date(System.currentTimeMillis() + 3 * 3600000));
@@ -75,12 +86,25 @@ public class DonationServiceImplementation implements DonationService {
     }
 
     @Override
-    public User requestDonation(User user) {
+    public User requestDonation(User user, Request request) throws Exception {
 
         if (user.isRequestDonation()) {
             user.setRequestDonation(false);
             user.setRequestDateTime(null);
         } else {
+            Request newRequest = new Request();
+            newRequest.setNgoName(request.getNgoName());
+            newRequest.setAddress(request.getAddress());
+            newRequest.setContactPerson(request.getContactPerson());
+            newRequest.setPhoneNumber(request.getPhoneNumber());
+            newRequest.setEmail(request.getEmail());
+            newRequest.setRegistrationNumber(request.getRegistrationNumber());
+            newRequest.setRequestDescription(request.getRequestDescription());
+            newRequest.setRequestStatus(
+                    "Pending");
+            newRequest.setRequestDateTime(new Date(System.currentTimeMillis()));
+
+            requestRepository.save(newRequest);
             user.setRequestDonation(true);
             user.setRequestDateTime(new Date(System.currentTimeMillis()));
         }
@@ -125,7 +149,39 @@ public class DonationServiceImplementation implements DonationService {
 
         donationRepository.save(donation);
 
+        user.setAvailableToDelevery(true);
+
+        EmailDetails emailDetails = new EmailDetails();
+        emailDetails.setRecipient(donation.getDonor().getEmail());
+        emailDetails.setSubject("Donation Status");
+        emailDetails.setMsgBody("Your Donation to a " + donation.getRecipient().getUserName() + " is " + status);
+        String result = emailService.sendSimpleMail(emailDetails);
+        System.out.println(result);
+        userRepository.save(user);
+
         return donation;
+    }
+
+    @Override
+
+    public Donation getDonation(Long donationId, User user) throws Exception {
+
+        Donation donation = findDonationById(donationId);
+
+        if (donation == null) {
+            throw new Exception("Donation is not there");
+        }
+
+        if (donation.getDeleveryBoy().getId() != user.getId()) {
+            throw new Exception("You cant upadte the donation Status");
+        }
+
+        return donation;
+    }
+
+    @Override
+    public List<Donation> findDonationByDeleveryBoy(User user) {
+        return donationRepository.findByDeleveryBoy(user);
     }
 
 }

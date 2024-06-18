@@ -7,5 +7,7 @@ public interface UserService {
     
     public User findByjwt(String jwt) throws Exception;
 
+
+    public User updateUser(User user,User reqUser) throws Exception;
     
 }

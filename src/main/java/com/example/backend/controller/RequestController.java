@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.entities.Donation;
 import com.example.backend.entities.FeedBack;
+import com.example.backend.entities.Request;
 import com.example.backend.entities.User;
 import com.example.backend.services.DonationService;
 import com.example.backend.services.FeedBackService;
@@ -33,7 +34,8 @@ public class RequestController {
     private FeedBackService feedBackService;
 
     @PutMapping("/request")
-    public User requestDonation(@RequestHeader("Authorization") String token) throws Exception {
+    public User requestDonation(@RequestHeader("Authorization") String token, @RequestBody Request request)
+            throws Exception {
 
         User user = userService.findByjwt(token);
 
@@ -42,7 +44,7 @@ public class RequestController {
 
         }
 
-        return donationService.requestDonation(user);
+        return donationService.requestDonation(user,request);
     }
 
     @GetMapping("/requests")
@@ -64,8 +66,18 @@ public class RequestController {
     public List<Donation> findUserPastDonations(@RequestHeader("Authorization") String token) throws Exception {
 
         User user = userService.findByjwt(token);
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println("User -> " + user.getRole().getName());
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println();
 
-        if (user.getRole().getName().equals("RECIPIENT")) {
+        if (!user.getRole().getName().equals("RECIPIENT")) {
             throw new Exception("You are not authorized to access this route");
         }
 
