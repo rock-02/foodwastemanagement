@@ -25,21 +25,32 @@ This project provides a backend API for user registration, login, donor creation
     https://github.com/rock-02/foodwastemanagement.git
   
 
-2. **Configure the application:**
-    - Update `src/main/resources/application.properties` with your database configuration and other settings:
-      ```properties
-      spring.datasource.url=jdbc:mysql://localhost:3306/your_database
-      spring.datasource.username=your_username
-      spring.datasource.password=your_password
-      spring.jpa.hibernate.ddl-auto=update
+2.spring.application.name=backend
+```
+server.port=8081
 
-      spring.mail.host=smtp.gmail.com
-      spring.mail.port=587
-      spring.mail.username=your-email@gmail.com
-      spring.mail.password=your-app-password
-      spring.mail.properties.mail.smtp.auth=true
-      spring.mail.properties.mail.smtp.starttls.enable=true
-      ```
+# DataSource Configuration
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.url=jdbc:mysql://localhost:3307/foodwaste
+spring.datasource.username=root
+spring.datasource.password=root
+
+# Jackson Configuration
+spring.jackson.serialization.fail-on-empty-beans=false
+
+# JPA Configuration
+spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+
+# Mail Configuration (SMTP)
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=your_email@example.com
+spring.mail.password=your_email_password
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+```
 
 3. **Build the project:**
     ```bash
