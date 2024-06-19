@@ -1,7 +1,5 @@
 package com.example.backend.entities;
 
-import javax.sound.midi.Sequence;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

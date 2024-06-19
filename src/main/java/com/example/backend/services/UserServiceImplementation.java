@@ -1,10 +1,14 @@
 package com.example.backend.services;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.config.jwtProvider;
 import com.example.backend.entities.User;
+import com.example.backend.entities.UserFeedBacks;
+import com.example.backend.repositories.UserFeedBackRepository;
 import com.example.backend.repositories.UserRepository;
 
 @Service
@@ -12,6 +16,9 @@ public class UserServiceImplementation implements UserService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    private UserFeedBackRepository userFeedBackRepository;
 
     @Override
     public User findByjwt(String jwt) throws Exception {
@@ -59,6 +66,30 @@ public class UserServiceImplementation implements UserService {
 
         return reqUser;
 
+    }
+
+    @Override
+    public UserFeedBacks userFeedback(User user, UserFeedBacks feedback) throws Exception {
+
+        if (user == null) {
+            throw new Exception("User not found");
+        }
+
+        UserFeedBacks userFeedback = new UserFeedBacks();
+
+        userFeedback.setFeedback(feedback.getFeedback());
+
+        userFeedback.setRating(feedback.getRating());
+
+        userFeedback.setUser(user);
+
+        userFeedback.setTimeStamp(new Date(System.currentTimeMillis()));
+
+        userRepository.save(user);
+        
+        userFeedBackRepository.save(userFeedback);
+
+        return userFeedback;
     }
 
 }

@@ -1,5 +1,7 @@
 package com.example.backend.entities;
 
+import java.util.Date;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,6 +24,8 @@ public class UserFeedBacks {
     private String feedback;
     private float rating;
 
+
+    private Date timeStamp;
     @ManyToOne
     private User user;
 }

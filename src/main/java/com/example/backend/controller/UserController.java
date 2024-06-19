@@ -2,6 +2,7 @@ package com.example.backend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.entities.User;
+import com.example.backend.entities.UserFeedBacks;
 import com.example.backend.services.UserService;
 
 @RestController
@@ -35,6 +37,17 @@ public class UserController {
         User updatedUser = userService.updateUser(user, reqUser);
 
         return updatedUser;
+    }
+
+    @PostMapping("/user/feedback")
+    public String userFeedback(@RequestHeader("Authorization") String token, @RequestBody UserFeedBacks feedback)
+            throws Exception {
+
+        User user = userService.findByjwt(token);
+
+        UserFeedBacks feedbacks = userService.userFeedback(user, feedback);
+
+        return "Feedback Submitted";
     }
 
 }
